@@ -6,15 +6,19 @@ author: "Anooj Ramanathan"
 
 ![](assets/logo/TIE_logo.svg){width=80% fig-align="center"}
 #Intro to tidyverse challenge
+```{r}
 library(tidyverse)
 library(readxl)
+```
+```{r}
 bikes_tbl <- read_excel(path = "00_data/01_raw_data/bikes.xlsx")
 orderlines_tbl <- read_excel("00_data/01_raw_data/orderlines.xlsx")
 bikeshops_tbl  <- read_excel("00_data/01_raw_data/bikeshops.xlsx")
 bike_orderlines_joined_tbl <- orderlines_tbl %>%
   left_join(bikes_tbl, by = c("product.id" = "bike.id")) %>%
   left_join(bikeshops_tbl, by = c("customer.id" = "bikeshop.id"))
-  
+```
+ ```{r} 
   bike_orderlines_wrangled_tbl <- bike_orderlines_joined_tbl %>% 
   separate(col = location, 
            into = c("City","State"),
@@ -28,7 +32,8 @@ bike_orderlines_joined_tbl <- orderlines_tbl %>%
          everything()) %>%
   rename(bikeshop = name) %>%
   set_names(names(.) %>% str_replace_all("\\.", "_"))
-  
+```
+```{r} 
   library(lubridate)
 
 sales_by_state_tbl <- bike_orderlines_wrangled_tbl %>%
@@ -39,8 +44,10 @@ sales_by_state_tbl <- bike_orderlines_wrangled_tbl %>%
                                      decimal.mark = ",", 
                                      prefix = "", 
                                      suffix = " €"))
-sales_by_state_tbl
 
+sales_by_state_tbl
+```
+```{r plot, fig.width=10, fig.height=7}
 sales_by_state_tbl %>% ggplot(aes(x = State, y =sales)) +
   geom_col(fill = "#2DC6D6") + 
   geom_label(aes(label = sales_text)) +
@@ -56,7 +63,8 @@ sales_by_state_tbl %>% ggplot(aes(x = State, y =sales)) +
     x = "", # Override defaults for x and y
     y = "Revenue amount"
   )
-  
+```
+```{r}
   sales_by_year_state_tbl <- bike_orderlines_wrangled_tbl %>%
   select(order_date,total_price,State) %>%
   mutate(year = year(order_date)) %>%
@@ -67,7 +75,8 @@ sales_by_state_tbl %>% ggplot(aes(x = State, y =sales)) +
                                      decimal.mark = ",", 
                                      prefix = "", 
                                      suffix = " €"))
-                                     
+  ```
+```{r plot2, fig.width=10, fig.height=7}
 sales_by_year_state_tbl %>% ggplot(aes(x = year, y = sales, fill = State)) + 
   geom_col() +
   facet_wrap(~ State) +
@@ -80,3 +89,4 @@ sales_by_year_state_tbl %>% ggplot(aes(x = year, y = sales, fill = State)) +
     subtitle = "State on different sales trend values",
     fill = "State" 
   )
+```
