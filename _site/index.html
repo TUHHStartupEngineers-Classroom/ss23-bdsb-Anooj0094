@@ -161,24 +161,15 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="assets/logo/TIE_logo.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="assets/logo/TIE_logo.svg" class="img-fluid figure-img" style="width:80.0%"></a></p>
-</figure>
-</div>
-<p>This is a template example for lab journaling. Students in the data science courses at the Institute of Entrepreneurship will use this template to learn R for business analytics. Students can replace this text as they wish.</p>
-<section id="how-to-use" class="level2">
-<h2 class="anchored" data-anchor-id="how-to-use">How to use</h2>
-<ol type="1">
-<li><p>Accept the assignment and get your own github repo.</p></li>
-<li><p>Blog/journal what you are doing in R, by editing the <code>.qmd</code> files.</p></li>
-<li><p>See the links page for lots of helpful links on learning R.</p></li>
-<li><p>Change everything to make it your own.</p></li>
-<li><p>Make sure to render you website everytime before you want to upload changes</p></li>
-</ol>
+<p><a href="assets/logo/TIE_logo.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="assets/logo/TIE_logo.svg" class="img-fluid" style="width:80.0%" data-fig-align="center"></a> #Intro to tidyverse challenge library(tidyverse) library(readxl) bikes_tbl &lt;- read_excel(path = “00_data/01_raw_data/bikes.xlsx”) orderlines_tbl &lt;- read_excel(“00_data/01_raw_data/orderlines.xlsx”) bikeshops_tbl &lt;- read_excel(“00_data/01_raw_data/bikeshops.xlsx”) bike_orderlines_joined_tbl &lt;- orderlines_tbl %&gt;% left_join(bikes_tbl, by = c(“product.id” = “bike.id”)) %&gt;% left_join(bikeshops_tbl, by = c(“customer.id” = “bikeshop.id”))</p>
+<p>bike_orderlines_wrangled_tbl &lt;- bike_orderlines_joined_tbl %&gt;% separate(col = location, into = c(“City”,“State”), sep = “,”) %&gt;% mutate(total.price = price * quantity) %&gt;% select(-…1,-gender) %&gt;% select(-ends_with(“.id”)) %&gt;% bind_cols(bike_orderlines_joined_tbl %&gt;% select(order.id)) %&gt;% select(order.id, contains(“order”), contains(“model”), contains(“category”), price, quantity, total.price, everything()) %&gt;% rename(bikeshop = name) %&gt;% set_names(names(.) %&gt;% str_replace_all(“\.”, “_“))</p>
+<p>library(lubridate)</p>
+<p>sales_by_state_tbl &lt;- bike_orderlines_wrangled_tbl %&gt;% select(State,total_price) %&gt;% group_by(State) %&gt;% summarize(sales = sum(total_price)) %&gt;% mutate(sales_text = scales::dollar(sales, big.mark = “.”, decimal.mark = “,”, prefix = ““, suffix =” €“)) sales_by_state_tbl</p>
+<p>sales_by_state_tbl %&gt;% ggplot(aes(x = State, y =sales)) + geom_col(fill = “#2DC6D6”) + geom_label(aes(label = sales_text)) + geom_smooth(method = “lm”, se = FALSE) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_y_continuous(labels = scales::dollar_format(big.mark = “.”, decimal.mark = “,”, prefix = ““, suffix =” €“)) + labs( title =”State Revenue Details”, subtitle = “State wise trend of sales”, x = ““, # Override defaults for x and y y =”Revenue amount” )</p>
+<p>sales_by_year_state_tbl &lt;- bike_orderlines_wrangled_tbl %&gt;% select(order_date,total_price,State) %&gt;% mutate(year = year(order_date)) %&gt;% group_by(year,State) %&gt;% summarise(sales = sum(total_price)) %&gt;% ungroup() %&gt;% mutate(sales_text = scales::dollar(sales, big.mark = “.”, decimal.mark = “,”, prefix = ““, suffix =” €“))</p>
+<p>sales_by_year_state_tbl %&gt;% ggplot(aes(x = year, y = sales, fill = State)) + geom_col() + facet_wrap(~ State) + scale_y_continuous(labels = scales::dollar_format(big.mark = “.”, decimal.mark = “,”, prefix = ““, suffix =” €“))+ labs( title =”Revenue by different years &amp; states”, subtitle = “State on different sales trend values”, fill = “State” )</p>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -530,7 +521,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","openEffect":"zoom","loop":true,"descPosition":"bottom","selector":".lightbox"});</script>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":true,"openEffect":"zoom","selector":".lightbox"});</script>
 
 
 
